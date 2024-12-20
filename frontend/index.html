@@ -71,6 +71,7 @@
             max-height: calc(100% - 140px);
             padding-top: 20px;
             animation: fadeInUp 1s ease-in-out;
+                margin-left: 10px;
         }
 
         .chat-message {
@@ -156,6 +157,15 @@
             background-color: #16a085;
         }
 
+
+        .page-heading {
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+        }
         /* Dark Mode Toggle Button */
         .theme-toggle {
             position: absolute;
@@ -240,10 +250,16 @@
 
 <body>
 
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    
 
     <div class="chat-container">
-        <h1>AI Personal Guide</h1>
+        <div class ="page-heading">
+            <h1>AI Personal Guide</h1>
+
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+
+        </div>
 
         <div id="chatbox">
             <!-- Chat messages will appear here -->
