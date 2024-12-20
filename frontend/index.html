@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #6e7e93, #232526);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            padding: 0;
+            overflow: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Dark Mode */
+        body.dark {
+            background: linear-gradient(135deg, #2C3E50, #34495E);
+            color: #ecf0f1;
+        }
+
+        /* Main chat container */
+        .chat-container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 1200px;
+            height: 90%;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .chat-container.dark {
+            background-color: #34495E;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Chatbox styles */
+        #chatbox {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+            max-height: calc(100% - 140px);
+            padding-top: 20px;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 15px;
+            line-height: 1.5;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .user-message {
+            background-color: #4CAF50;
+            color: white;
+            align-self: flex-start;
+        }
+
+        .ai-response {
+            background-color: #f1f1f1;
+            color: #333;
+            align-self: flex-end;
+            position: relative;
+            animation: typingEffect 1.5s steps(10) infinite;
+        }
+
+        .loading {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            margin-top: 15px;
+            font-weight: bold;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Button styles */
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #fff;
+        }
+
+        #query {
+            width: 80%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            margin-right: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #query:focus {
+            border-color: #4CAF50;
+        }
+
+        button {
+            padding: 12px 18px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            animation: scaleUp 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button.dark {
+            background-color: #1abc9c;
+        }
+
+        button.dark:hover {
+            background-color: #16a085;
+        }
+
+        /* Dark Mode Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            animation: scaleUp 0.3s ease-in-out;
+        }
+
+        .theme-toggle:hover {
+            background-color: #45a049;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typingEffect {
+            from {
+                content: "AI is typing...";
+                animation-timing-function: steps(0);
+            }
+            50% {
+                content: "AI is typing...";
+                animation-timing-function: steps(2);
+            }
+            to {
+                content: "";
+            }
+        }
+
+        @keyframes scaleUp {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <div class="chat-container">
+        <h1>AI Personal Guide</h1>
+
+        <div id="chatbox">
+            <!-- Chat messages will appear here -->
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="query" placeholder="Ask me anything..." />
+            <button onclick="sendQuery()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle function
+        function toggleTheme() {
+            const body = document.body;
+            const chatContainer = document.querySelector('.chat-container');
+            const button = document.querySelector('.theme-toggle');
+            body.classList.toggle('dark');
+            chatContainer.classList.toggle('dark');
+            button.classList.toggle('dark');
+
+            // Change the button icon based on the theme
+            if (body.classList.contains('dark')) {
+                button.textContent = '🌞'; // Switch to light mode
+            } else {
+                button.textContent = '🌙'; // Switch to dark mode
+            }
+        }
+
+        // Send query function
+        function sendQuery() {
+            const query = document.getElementById('query').value;
+            if (!query) {
+                alert("Please enter a question.");
+                return;
+            }
+
+            // Clear input field after sending
+            document.getElementById('query').value = '';
+
+            // Display user's query in the chat
+            const chatbox = document.getElementById('chatbox');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.classList.add('chat-message', 'user-message');
+            userMessageDiv.innerText = `You: ${query}`;
+            chatbox.appendChild(userMessageDiv);
+
+            // Display loading animation while waiting for response
+            const loadingDiv = document.createElement('div');
+            loadingDiv.classList.add('loading');
+            loadingDiv.innerText = "AI is typing...";
+            chatbox.appendChild(loadingDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Send a POST request to the backend
+            fetch('https://chatbotopenai.azurewebsites.net/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: query })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove loading message
+                    loadingDiv.remove();
+
+                    // Display AI's response in the chat
+                    const aiResponseDiv = document.createElement('div');
+                    aiResponseDiv.classList.add('chat-message', 'ai-response');
+                    if (data.response) {
+                        aiResponseDiv.innerText = `AI: ${data.response}`;
+                    } else {
+                        aiResponseDiv.innerText = `AI: Sorry, I couldn't understand that.`;
+                    }
+                    chatbox.appendChild(aiResponseDiv);
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // If there is an error, show an error message
+                    const loadingDiv = document.querySelector('.loading');
+                    if (loadingDiv) loadingDiv.remove();
+
+                    const aiResponseDiv = document.createElement('div');
+                    aiResponseDiv.classList.add('chat-message', 'ai-response');
+                    aiResponseDiv.innerText = `AI: There was an error processing your request. Please try again later.`;
+                    chatbox.appendChild(aiResponseDiv);
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                });
+        }
+    </script>
+
+</body>
+
+</html>
